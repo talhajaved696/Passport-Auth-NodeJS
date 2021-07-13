@@ -1,0 +1,18 @@
+<h1 class="mt-4">User Profile</h1>
+<p class="lead mb-3"><%= user.name %></p>
+
+<div>
+<form action="/users/profile" method="POST" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Add Photo</legend>
+    
+    <div class="form-group">
+      <label for="image" class="form-label mt-4">Upload:</label>
+      <input class="form-control" type="file" id="image" name="image" value="" required>
+    </div> 
+    
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </fieldset>
+</form>
+</div>

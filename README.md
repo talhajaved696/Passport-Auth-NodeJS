@@ -1,8 +1,11 @@
-## Passport-Local-Auth
+## Local-Authentication
+
+### Task Completed
 User authentication using NodeJS.
 
+### How to use:
 $ npm install
 
 $ npm start
 
-### Add MogoURI in config folder in the root directory for the database.
+### Add MongoURI in config folder in the root directory for the database.

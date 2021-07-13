@@ -5,4 +5,4 @@ $ npm install
 
 $ npm start
 
-### Add MogoURI for the database.
+### Add MogoURI in config folder in the root directory for the database.

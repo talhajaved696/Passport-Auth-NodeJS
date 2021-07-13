@@ -2,6 +2,7 @@
 
 ### Task Completed
 User authentication using NodeJS.
+Front-end using EJS Template Engine.
 
 ### How to use:
 $ npm install

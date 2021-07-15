@@ -13,7 +13,7 @@ dotenv.config({
 require('./config/passport')(passport);
 
 // DB Config
-const db = require('./config/keys').mongoURI;
+const db = process.env.MONGOURI;
 
 // Connect to MongoDB
 mongoose

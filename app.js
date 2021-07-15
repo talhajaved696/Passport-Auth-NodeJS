@@ -14,7 +14,6 @@ require('./config/passport')(passport);
 
 // DB Config
 const db = process.env.MONGOURI;
-
 // Connect to MongoDB
 mongoose
   .connect(

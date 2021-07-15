@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const fs = require('fs');
 const path = require('path');
+const cloudinary = require("../utils/cloudinary");
+const upload = require("../utils/multer");
 // Load User model
 const User = require('../models/User');
 var imgModel = require('../models/Image');
@@ -97,7 +99,7 @@ router.get('/logout', (req, res) => {
 
 //Profile
 router.get('/profile', (req, res) => {
-  imgModel.findById(req.user._id, (err, items) => {
+  imgModel.find({}, (err, items) => {
     if (err) {
       console.log(err);
       res.status(500).send('An error occurred', err);
@@ -108,39 +110,47 @@ router.get('/profile', (req, res) => {
   });
 });
 
-//Multer Setup
-var multer = require('multer');
-const maxSize = 20 * 1000 * 1000; //File Size 20MB
-var storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/')
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName)
-  }
-});
 
-var upload = multer({ storage: storage, limits: { fileSize: maxSize } }).single('image');
 
-// Image Update
-router.post('/profile',(req, res, next) => {
- upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).send({
-        error: err.message
-      });
-    }
-    const image = new imgModel({
-      img: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-            contentType: 'image/png'
-        }
+// Image Update API 
+router.post('/profile',upload.single('image'),async (req, res, next) => {
+ try {
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+     // Create new user
+    let image = new imgModel({
+      user: req.user._id,
+      img: result.secure_url,
+      cloudinary_id: result.public_id,
     });
+    // Save user
     await image.save();
-    res.redirect("/dashboard");
-  });
-});
+    res.json(image);
+  } catch (err) {
+    console.log(err);
+  }});
+
+router.put("/profile/:id", upload.single("image"), async (req, res) => {
+  try {
+    let image = await imgModel.findById(req.params.id);
+    // Delete image from cloudinary
+    await cloudinary.uploader.destroy(image.cloudinary_id);
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+    const data = {
+      user: req.user._id,
+      avatar: result.secure_url || image.img,
+      cloudinary_id: result.public_id || image.cloudinary_id,
+    };
+    user = await User.findByIdAndUpdate(req.params.id, data, {
+ new: true
+ });
+    res.json(image);
+  } catch (err) {
+    console.log(err);
+  }});
+
+// API Testing
 router.get('/user/:id', async (req, res) => {
   const user = await User.findById(req.params.id)
 

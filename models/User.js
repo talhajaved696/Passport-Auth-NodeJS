@@ -21,6 +21,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  cloudinary_id: {
+    type: String,
+  },
 });
 
 const User = mongoose.model('User', UserSchema);

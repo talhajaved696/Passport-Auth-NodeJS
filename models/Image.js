@@ -8,9 +8,11 @@ var imageSchema = new mongoose.Schema({
     },
     img:
     {
-        data: Buffer,
-        contentType: String
-    }
+        type:String
+    },
+    cloudinary_id: {
+        type: String,
+  },
 });
 
 //Image is a model which has a schema imageSchema
